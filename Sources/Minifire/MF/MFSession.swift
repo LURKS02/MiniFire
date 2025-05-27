@@ -78,8 +78,12 @@ open class MFSession {
             let (data, response) = try await session.data(for: urlRequest)
             let transformedData = try transformer(data)
             
+            if let validator = request.validation {
+                try validator(response)
+            }
+            
             let mfResponse = MFResponse(
-                request: try request.asURLRequest(),
+                request: urlRequest,
                 response: response,
                 value: transformedData
             )

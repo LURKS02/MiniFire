@@ -25,6 +25,8 @@ public class MFRequest {
     
     private(set) var error: MFError? = nil
     
+    private(set) var validation: ((URLResponse) throws -> Void)?
+    
     public var request: URLRequest? {
         try? asURLRequest()
     }
@@ -91,6 +93,19 @@ public class MFRequest {
     @discardableResult
     public func addHeaders(_ headers: MFHeaders) -> Self {
         self.headers = (self.headers?.merge(with: headers)) ?? headers
+        return self
+    }
+    
+    @discardableResult
+    public func validate(statusCode acceptableStatusCodes: Range<Int> = 200..<300) -> Self {
+        self.validation = { response in
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw MFError.invalidResponse(response)
+            }
+            guard acceptableStatusCodes.contains(httpResponse.statusCode) else {
+                throw MFError.invalidStatusCode(httpResponse.statusCode)
+            }
+        }
         return self
     }
     

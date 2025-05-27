@@ -14,6 +14,8 @@ extension Error {
 }
 
 public enum MFError: Error, CustomStringConvertible {
+    case invalidResponse(URLResponse)
+    case invalidStatusCode(Int)
     case invalidURL
     case invalidContentType
     case networkFailure(underlyingError: Error)
@@ -27,6 +29,10 @@ public enum MFError: Error, CustomStringConvertible {
     
     public var description: String {
         switch self {
+        case .invalidResponse(let response):
+            return "Error: Expected HTTPURLResponse but received \(type(of: response))"
+        case .invalidStatusCode(let statusCode):
+            return "Error: Invalid HTTP status code: \(statusCode)"
         case .invalidURL:
             return "Error: The URL provided is invalid."
         case .invalidContentType:
