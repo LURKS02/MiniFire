@@ -86,6 +86,8 @@ extension URLRequest {
             return "\(numberValue)"
         } else if let boolValue = value as? Bool {
             return boolValue ? "true" : "false"
+        } else if let uuidValue = value as? UUID {
+            return uuidValue.uuidString
         }
         return nil
     }
