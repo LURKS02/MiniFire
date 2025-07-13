@@ -26,6 +26,7 @@ public enum MFError: Error, CustomStringConvertible {
     case jsonSerializationFailure
     case urlEncodingFailure
     case invalidQueryValue(key: String, value: Any)
+    case customError(Error)
     
     public var description: String {
         switch self {
@@ -53,6 +54,8 @@ public enum MFError: Error, CustomStringConvertible {
             return "Error: Failed to encode parameters to url encoded data."
         case .invalidQueryValue(key: let key, value: let value):
             return "Error: Invalid parameter - \(key): \(value)"
+        case .customError(let customError):
+            return "Custom Error: \(customError)"
         }
     }
 }

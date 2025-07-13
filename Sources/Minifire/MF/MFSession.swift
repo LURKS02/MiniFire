@@ -11,6 +11,7 @@ open class MFSession {
     public static let `default` = MFSession()
     
     public let session: URLSession
+    public var errorDecoder: (any MFErrorDecoder)?
     
     public init(session: URLSession) {
         self.session = session
@@ -19,6 +20,12 @@ open class MFSession {
     public convenience init(configuration: URLSessionConfiguration = URLSessionConfiguration.default) {
         let session = URLSession(configuration: configuration)
         self.init(session: session)
+    }
+
+    @discardableResult
+    open func setErrorDecoder(_ decoder: any MFErrorDecoder) -> Self {
+        self.errorDecoder = decoder
+        return self
     }
     
     @discardableResult
@@ -76,6 +83,14 @@ open class MFSession {
         do {
             let urlRequest = try request.asURLRequest()
             let (data, response) = try await session.data(for: urlRequest)
+            
+            if let errorDecoder = errorDecoder,
+               let httpResponse = response as? HTTPURLResponse {
+                if let customError = try? errorDecoder.decodeError(from: data, response: httpResponse) {
+                    throw MFError.customError(customError)
+                }
+            }
+            
             if let validator = request.validation {
                 try validator(response)
             }
