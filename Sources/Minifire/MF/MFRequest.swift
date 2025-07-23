@@ -61,6 +61,12 @@ public class MFRequest {
     }
     
     @discardableResult
+    public func patch() -> Self {
+        self.method = .patch
+        return self
+    }
+    
+    @discardableResult
     public func setMethod(_ method: MFHTTPMethod) -> Self {
         self.method = method
         return self
