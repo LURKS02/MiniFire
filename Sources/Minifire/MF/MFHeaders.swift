@@ -35,6 +35,7 @@ public struct MFHeaders {
         return Dictionary(namesAndValues, uniquingKeysWith: { _, last in last })
     }
     
+    @discardableResult
     public mutating func merge(with other: MFHeaders) -> Self {
         other.headers.forEach { newHeader in
             headers.removeAll(where: { $0.name == newHeader.name })

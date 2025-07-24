@@ -34,8 +34,15 @@ extension URLRequest {
         
         httpMethod = method.rawValue
         
+        var finalHeaders = headers
+        
         if let params = parameters {
-            let contentType = headers?.dictionary["Content-Type"] ?? "application/json"
+            var contentType = finalHeaders?.dictionary["Content-Type"]
+            
+            if contentType == nil {
+                contentType = "application/json"
+                finalHeaders?.merge(with: [.contentType("application/json")])
+            }
                 
             switch contentType {
             case "application/json":
@@ -49,7 +56,7 @@ extension URLRequest {
             }
         }
         
-        allHTTPHeaderFields = headers?.dictionary
+        allHTTPHeaderFields = finalHeaders?.dictionary
     }
     
     private func validateAndSerializeJSON(_ params: [String: Any]) throws -> Data {
