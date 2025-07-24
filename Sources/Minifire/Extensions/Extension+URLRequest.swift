@@ -34,14 +34,14 @@ extension URLRequest {
         
         httpMethod = method.rawValue
         
-        var finalHeaders = headers
+        var finalHeaders = headers ?? MFHeaders()
         
         if let params = parameters {
-            var contentType = finalHeaders?.dictionary["Content-Type"]
+            var contentType = finalHeaders.dictionary["Content-Type"]
             
             if contentType == nil {
                 contentType = "application/json"
-                finalHeaders?.merge(with: [.contentType("application/json")])
+                finalHeaders.merge(with: [.contentType("application/json")])
             }
                 
             switch contentType {
@@ -56,7 +56,7 @@ extension URLRequest {
             }
         }
         
-        allHTTPHeaderFields = finalHeaders?.dictionary
+        allHTTPHeaderFields = finalHeaders.dictionary
     }
     
     private func validateAndSerializeJSON(_ params: [String: Any]) throws -> Data {
